@@ -1,9 +1,11 @@
 (async()=>{
 const A=window.KeleAPI,U=window.KeleUtils,e=U.escape;let data;
 const status=document.querySelector('#booking-status');
-if(!A.configured){if(status)status.textContent='Appointments are not yet open online.';return;}
+const galleryStatus=document.querySelector('#gallery .gallery');
+function galleryUnavailable(){if(galleryStatus){galleryStatus.innerHTML='<p class="muted" role="status">The gallery is temporarily unavailable. Please try again later.</p>';galleryStatus.setAttribute('aria-busy','false');}}
+if(!A.configured){galleryUnavailable();if(status)status.textContent='Appointments are not yet open online.';return;}
 try{data=await A.publicData();if(!data.settings)throw new Error('Studio settings are not available.');}
-catch(error){if(status)status.textContent='Appointments are temporarily unavailable. Please try again later.';const n=document.createElement('p');n.className='message';n.setAttribute('role','status');n.textContent=error.message.includes('Could not find the table')?'Online bookings are being set up. Please check back soon.':'We could not load the latest studio information. Please try again later.';document.querySelector('main').prepend(n);return;}
+catch(error){galleryUnavailable();if(status)status.textContent='Appointments are temporarily unavailable. Please try again later.';const n=document.createElement('p');n.className='message';n.setAttribute('role','status');n.textContent=error.message.includes('Could not find the table')?'Online bookings are being set up. Please check back soon.':'We could not load the latest studio information. Please try again later.';document.querySelector('main').prepend(n);return;}
 const settings=data.settings;
 const hero=document.querySelector('.hero-photo');
 if(hero){
@@ -22,7 +24,7 @@ if(hero){
     preload.src=url;
   }
 }
-const gallery=document.querySelector('.gallery');if(gallery){gallery.innerHTML=data.images.filter(x=>x.placement==='gallery').map(x=>`<figure class="gallery-card"><img class="gallery-image" src="${e(U.imageURL(x.url))}" alt="${e(x.alt)}" loading="lazy"><figcaption>${e(x.caption)}</figcaption></figure>`).join('')||'<p>New nail photos are coming soon.</p>';}
+const gallery=document.querySelector('#gallery .gallery');if(gallery){gallery.setAttribute('aria-busy','false');gallery.innerHTML=data.images.filter(x=>x.placement==='gallery').map(x=>`<figure class="gallery-card"><img class="gallery-image" src="${e(U.imageURL(x.url))}" alt="${e(x.alt)}" loading="lazy"><figcaption>${e(x.caption)}</figcaption></figure>`).join('')||'<p>New nail photos are coming soon.</p>';}
 const services=document.querySelector('.services-list');if(services)services.innerHTML=data.services.map(x=>`<details class="service"><summary>${e(x.name)} <span class="price">${e(U.money(x.price))}</span></summary><div class="service-content"><p>${e(x.description)}</p><p>${e(x.duration_minutes)} minutes</p><a href="/contact/?service=${encodeURIComponent(x.id)}#booking">Choose this treatment</a></div></details>`).join('')||'<p>Our updated service menu is coming soon.</p>';
 const team=document.querySelector('#team');if(team){team.innerHTML=data.therapists.map(x=>`<article class="team-card">${x.photo_url?`<img src="${e(U.imageURL(x.photo_url))}" alt="${e(x.name)}" loading="lazy">`:''}<h3>${e(x.name)}</h3><p>${e(x.bio)}</p><a href="/contact/?therapist=${encodeURIComponent(x.id)}#booking">Book with ${e(x.name)}</a></article>`).join('');document.querySelector('#team-section').hidden=!data.therapists.length;}
 const cards=document.querySelectorAll('.contact-card p');if(cards.length){cards[0].textContent=settings.location||'Studio location will be added soon.';cards[1].textContent=settings.opening_hours||'Appointment hours will be added soon.';cards[2].replaceChildren();if(U.validWhatsApp(settings.whatsapp_number)){const a=document.createElement('a');a.href='https://wa.me/'+settings.whatsapp_number;a.target='_blank';a.rel='noopener';a.textContent='WhatsApp: +'+settings.whatsapp_number;cards[2].append(a);}if(settings.email){const p=document.createElement('p');p.textContent=settings.email;cards[2].append(p);}if(!cards[2].textContent)cards[2].textContent='Contact details will be added soon.';}
