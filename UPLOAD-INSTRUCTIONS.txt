@@ -1,0 +1,11 @@
+All website files are in one folder. Upload these files directly to the root of your GitHub repository.
+
+GitHub Settings > Pages: Source = Deploy from a branch; Branch = main; Folder = / (root). Custom domain = www.nailsbykele.co.za.
+
+IMPORTANT: If you uploaded the earlier version, delete .nojekyll and the about, admin, contact, gallery and services folders from GitHub. Keep the corresponding .html files from this ZIP.
+
+Keep _config.yml and the YAML lines at the top of the five page files: GitHub uses Jekyll to build clean URLs (/about/, /services/, /gallery/, /contact/, /admin/) from the flat source files. No source subfolders or .htaccess are needed. Preview through GitHub Pages or Jekyll; opening the source files directly does not process the permalinks. Old .html URLs are no longer generated.
+
+Add your own favicon.jpeg next to index.html. No placeholder favicon is included.
+
+The old hero image flash is fixed: the selected Supabase hero is shown only after it loads, with a blush background while loading.

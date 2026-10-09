@@ -1,0 +1,6 @@
+title: Nails By Kele
+url: "https://www.nailsbykele.co.za"
+baseurl: ""
+theme: null
+exclude:
+  - UPLOAD-INSTRUCTIONS.txt
